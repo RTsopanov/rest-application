@@ -1,0 +1,72 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.5'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'ibs.rest'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+//	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.7.0'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-database-postgresql'
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'junit:junit:4.13.2'
+//	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
+//	implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.3'
+
+//	Генерирует DTO
+	implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
+	annotationProcessor('org.mapstruct:mapstruct-processor:1.5.5.Final')
+
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.3.0'
+//	implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '18.0.0'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+test {
+	useJUnitPlatform()
+	jvmArgs '-XX:+EnableDynamicAgentLoading', '-Djdk.instrument.traceUsage=true'
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs += ['-Amapstruct.defaultComponentModel=spring']
+}
+
+tasks.withType(JavaCompile) {
+	options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+
